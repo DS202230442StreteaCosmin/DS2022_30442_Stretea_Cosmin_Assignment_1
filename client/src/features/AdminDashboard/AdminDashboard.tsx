@@ -4,21 +4,21 @@ import { Box, Tab } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
+import Devices from './Devices/Devices';
+import Mappings from './Mappings/Mappings';
 // import { getAppointmentsAction } from "../../stores/appointments/actions";
 // import { getCarsAction } from "../../stores/car/actions";
 // import { getManufacturersAction } from "../../stores/manufacturer/actions";
 // import { useAppDispatch, useAppSelector } from "../../stores/store";
 // import { initUserData } from "../../stores/user/actions";
 // import { logout, setSearchInput } from "../../stores/user/slice";
-import AdminAppointments from './Appointments/AdminAppointments';
-import CustomerAppointments from './Appointments/AdminAppointments';
-import AdminCars from './Cars/AdminCars';
+import Users from './Users/Users';
 
 const AdminDashboard = () => {
     // const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [currentRoute, setCurrentRoute] = React.useState(
-        '/admin-dashboard/cars'
+        '/admin-dashboard/users'
     );
     // const userId = useAppSelector((state) => state.user.user.id);
 
@@ -51,10 +51,14 @@ const AdminDashboard = () => {
                             onChange={handleChange}
                             aria-label='lab API tabs example'
                         >
-                            <Tab label='Cars' value='/admin-dashboard/cars' />
+                            <Tab label='Users' value='/admin-dashboard/users' />
                             <Tab
-                                label='Appointments'
-                                value='/admin-dashboard/appointments'
+                                label='Devices'
+                                value='/admin-dashboard/devices'
+                            />
+                            <Tab
+                                label='Mappings'
+                                value='/admin-dashboard/mappings'
                             />
                         </TabList>
                         <Box display='flex' alignItems='center'>
@@ -62,11 +66,14 @@ const AdminDashboard = () => {
                         </Box>
                         <button onClick={() => {}}>logout</button>
                     </Box>
-                    <TabPanel value='/admin-dashboard/cars'>
-                        <AdminCars />
+                    <TabPanel value='/admin-dashboard/users'>
+                        <Users />
                     </TabPanel>
-                    <TabPanel value='/admin-dashboard/appointments'>
-                        <AdminAppointments />
+                    <TabPanel value='/admin-dashboard/devices'>
+                        <Devices />
+                    </TabPanel>
+                    <TabPanel value='/admin-dashboard/mappings'>
+                        <Mappings />
                     </TabPanel>
                 </TabContext>
             </Box>
