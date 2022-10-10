@@ -1,16 +1,14 @@
-import { Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { Box, Divider } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import { Divider } from "@mui/material";
-
 import React from "react";
 
 type Props = {
   item: any;
   quantity: number;
-  addToCart: (item: any) => void;
-  removeFromCart: (id: string) => void;
+  addToCart: () => void;
+  removeFromCart: () => void;
 };
 
 const CartItem = (props: Props) => {
@@ -24,11 +22,11 @@ const CartItem = (props: Props) => {
         <Box
           sx={{ display: "flex", justifyItems: "center", alignItems: "center" }}
         >
-          <IconButton onClick={() => props.removeFromCart(props.item.id)}>
+          <IconButton onClick={() => props.removeFromCart()}>
             <RemoveIcon />
           </IconButton>
           <Box component="h3">{props.quantity}</Box>
-          <IconButton onClick={() => props.addToCart(props.item)}>
+          <IconButton onClick={() => props.addToCart()}>
             <AddIcon />
           </IconButton>
         </Box>
