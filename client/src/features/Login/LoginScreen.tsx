@@ -12,11 +12,12 @@ import {
 import Paper from '@mui/material/Paper';
 import React from 'react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../router/AppRoutes';
 
 const LoginScreen = () => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
         <Grid container component='main' sx={{ height: '100vh' }}>
@@ -92,6 +93,7 @@ const LoginScreen = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 // dispatch(loginAction(email, password));
+                                navigate(AppRoutes.ADMIN_DASHBOARD);
                             }}
                         >
                             Sign In

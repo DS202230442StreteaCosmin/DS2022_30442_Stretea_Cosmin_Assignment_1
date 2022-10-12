@@ -17,6 +17,7 @@ import IconButton from '@mui/material/IconButton';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MappingModal from './MappingModal/MappingModal';
 // import { useAppDispatch, useAppSelector } from '../../../stores/store';
 // import CarItem from './CarItem/CarItem';
 // import { deleteCar, setCurrentCar } from '../../../stores/car/slice';
@@ -83,6 +84,8 @@ const Mappings = () => {
             maxHourlyConsumption: 12,
         },
     ];
+
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
     // const searchCriteria = useAppSelector((state) => state.user.searchInput);
     // const dispatch = useAppDispatch();
     // const modal = useAppSelector((state) => state.user.isCarModalOpen);
@@ -119,10 +122,11 @@ const Mappings = () => {
                 <Button
                     size='large'
                     sx={{ marginBottom: 2, border: '1px solid grey' }}
-                    onClick={() => {
-                        // dispatch(setCurrentCar(initialCarEntityState));
-                        // dispatch(setCarModal(true));
-                    }}
+                    // onClick={() => {
+                    // dispatch(setCurrentCar(initialCarEntityState));
+                    // dispatch(setCarModal(true));
+                    // }}
+                    onClick={() => setIsModalOpen(true)}
                 >
                     Add device to selected user
                 </Button>
@@ -190,11 +194,11 @@ const Mappings = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <CarModal
-                isOpen={modal}
-                onClose={() => dispatch(setCarModal(false))}
-                onSubmit={submitHandler}
-            /> */}
+            <MappingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={() => {}}
+            />
         </>
     );
 };

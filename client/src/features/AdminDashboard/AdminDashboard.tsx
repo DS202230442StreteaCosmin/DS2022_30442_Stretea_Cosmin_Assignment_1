@@ -4,6 +4,7 @@ import { Box, Tab } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
+import { AppRoutes } from '../../router/AppRoutes';
 import Devices from './Devices/Devices';
 import Mappings from './Mappings/Mappings';
 // import { getAppointmentsAction } from "../../stores/appointments/actions";
@@ -64,7 +65,9 @@ const AdminDashboard = () => {
                         <Box display='flex' alignItems='center'>
                             <SearchBar />
                         </Box>
-                        <button onClick={() => {}}>logout</button>
+                        <button onClick={() => navigate(AppRoutes.LOGIN)}>
+                            logout
+                        </button>
                     </Box>
                     <TabPanel value='/admin-dashboard/users'>
                         <Users />

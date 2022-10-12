@@ -14,7 +14,7 @@ const SearchSelect = (props: SearchSelectProps) => {
             id='combo-box-demo'
             options={props.options}
             sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label='Movie' />}
+            renderInput={(params) => <TextField {...params} label='User' />}
         />
     );
 };

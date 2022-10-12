@@ -18,6 +18,7 @@ import IconButton from '@mui/material/IconButton';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import UserModal from './UserModal/UserModal';
 // import { useAppDispatch, useAppSelector } from '../../../stores/store';
 // import CarItem from './CarItem/CarItem';
 // import { deleteCar, setCurrentCar } from '../../../stores/car/slice';
@@ -47,6 +48,8 @@ const Users = () => {
     // const dispatch = useAppDispatch();
     // const modal = useAppSelector((state) => state.user.isCarModalOpen);
 
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+
     // const deleteHandler = (id: number) => {
     //     dispatch(deleteCarAction(id));
     // };
@@ -68,16 +71,18 @@ const Users = () => {
         <>
             <Box>
                 {/* <SearchSelect options={top100Films} /> */}
-                {/* <Button
+                <Button
                     size='large'
                     sx={{ marginBottom: 2, border: '1px solid grey' }}
-                    onClick={() => {
-                        dispatch(setCurrentCar(initialCarEntityState));
-                        dispatch(setCarModal(true));
-                    }}
+                    // onClick={() => {
+                    //     dispatch(setCurrentCar(initialCarEntityState));
+                    //     dispatch(setCarModal(true));
+                    // }}
+
+                    onClick={() => setIsModalOpen(true)}
                 >
-                    Add new car
-                </Button> */}
+                    Add new user
+                </Button>
             </Box>
             {/* <Grid container spacing={4}>
                 {cars
@@ -137,11 +142,11 @@ const Users = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <CarModal
-                isOpen={modal}
-                onClose={() => dispatch(setCarModal(false))}
-                onSubmit={submitHandler}
-            /> */}
+            <UserModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={() => {}}
+            />
         </>
     );
 };

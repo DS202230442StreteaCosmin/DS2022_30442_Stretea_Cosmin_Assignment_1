@@ -17,6 +17,7 @@ import IconButton from '@mui/material/IconButton';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeviceModal from './DeviceModal/DeviceModal';
 // import { useAppDispatch, useAppSelector } from '../../../stores/store';
 // import CarItem from './CarItem/CarItem';
 // import { deleteCar, setCurrentCar } from '../../../stores/car/slice';
@@ -86,6 +87,7 @@ const Devices = () => {
     // const searchCriteria = useAppSelector((state) => state.user.searchInput);
     // const dispatch = useAppDispatch();
     // const modal = useAppSelector((state) => state.user.isCarModalOpen);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
 
     // const deleteHandler = (id: number) => {
     //     dispatch(deleteCarAction(id));
@@ -111,10 +113,11 @@ const Devices = () => {
                 <Button
                     size='large'
                     sx={{ marginBottom: 2, border: '1px solid grey' }}
-                    onClick={() => {
-                        // dispatch(setCurrentCar(initialCarEntityState));
-                        // dispatch(setCarModal(true));
-                    }}
+                    // onClick={() => {
+                    // dispatch(setCurrentCar(initialCarEntityState));
+                    // dispatch(setCarModal(true));
+                    // }}
+                    onClick={() => setIsModalOpen(true)}
                 >
                     Add new device
                 </Button>
@@ -187,11 +190,11 @@ const Devices = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* <CarModal
-                isOpen={modal}
-                onClose={() => dispatch(setCarModal(false))}
-                onSubmit={submitHandler}
-            /> */}
+            <DeviceModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={() => {}}
+            />
         </>
     );
 };
