@@ -17,7 +17,7 @@ function App() {
                 <Route path={AppRoutes.LOGIN} element={<LoginScreen />} />
                 <Route path={AppRoutes.REGISTER} element={<RegisterScreen />} />
                 <Route
-                    path={AppRoutes.ADMIN_DASHBOARD}
+                    path={`${AppRoutes.ADMIN_DASHBOARD}/*`}
                     element={<AdminDashboard />}
                 />
                 <Route

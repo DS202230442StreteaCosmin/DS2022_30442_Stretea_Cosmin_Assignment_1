@@ -93,7 +93,7 @@ const LoginScreen = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 // dispatch(loginAction(email, password));
-                                navigate(AppRoutes.ADMIN_DASHBOARD);
+                                navigate(AppRoutes.DASHBOARD);
                             }}
                         >
                             Sign In
