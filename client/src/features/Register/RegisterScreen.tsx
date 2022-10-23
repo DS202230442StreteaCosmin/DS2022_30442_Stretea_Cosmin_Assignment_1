@@ -12,11 +12,43 @@ import {
 import Paper from '@mui/material/Paper';
 import React from 'react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../router/AppRoutes';
+import { useGetProfileQuery, useLoginMutation } from '../../services/auth/auth';
+import { ILoginUser, UserRoles } from '../../services/auth/model';
+import { useAppSelector } from '../../store/store';
 
 const RegisterScreen = () => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const navigate = useNavigate();
+
+    const currentUser = useAppSelector((state) => state.userState.user);
+    const { data: profile, isFetching } = useGetProfileQuery(undefined);
+
+    const [login, { isLoading, isError }] = useLoginMutation();
+
+    const handleLogin = async () => {
+        try {
+            const bodyData: ILoginUser = {
+                email: email,
+                password: password,
+            };
+
+            await login(bodyData).unwrap();
+        } catch (error) {}
+    };
+
+    React.useEffect(() => {
+        if (!currentUser) {
+            return;
+        }
+
+        if (currentUser.role === UserRoles.ADMIN) {
+            navigate(AppRoutes.ADMIN_DASHBOARD);
+        } else {
+            navigate(AppRoutes.DASHBOARD);
+        }
+    }, [currentUser, profile]);
 
     // React.useEffect(() => {
     //     if (user.isLoggedIn) {

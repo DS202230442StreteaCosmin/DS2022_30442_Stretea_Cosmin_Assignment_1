@@ -25,6 +25,8 @@ import {
     Tooltip,
     Legend,
 } from 'recharts';
+import { useAppDispatch } from '../../store/store';
+import { logout } from '../../store/user/userSlice';
 
 const data = [
     {
@@ -72,7 +74,7 @@ const data = [
 ];
 
 const CustomerDashboard = () => {
-    // const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [date, setDate] = React.useState<Dayjs | null>(null);
 
@@ -122,9 +124,7 @@ const CustomerDashboard = () => {
                         }}
                         renderInput={(params) => <TextField {...params} />}
                     />
-                    <button onClick={() => navigate(AppRoutes.LOGIN)}>
-                        logout
-                    </button>
+                    <button onClick={() => dispatch(logout())}>logout</button>
                 </Box>
                 {/* <TabPanel value='/admin-dashboard/users'>
                     <Users />

@@ -2,9 +2,11 @@ import { TabContext, TabPanel } from '@mui/lab';
 import TabList from '@mui/lab/TabList';
 import { Box, Tab } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
 import { AppRoutes } from '../../router/AppRoutes';
+import { useAppDispatch } from '../../store/store';
+import { logout } from '../../store/user/userSlice';
 import Devices from './Devices/Devices';
 import Mappings from './Mappings/Mappings';
 // import { getAppointmentsAction } from "../../stores/appointments/actions";
@@ -16,7 +18,8 @@ import Mappings from './Mappings/Mappings';
 import Users from './Users/Users';
 
 const AdminDashboard = () => {
-    // const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
+    const location = useLocation();
     const navigate = useNavigate();
     const [currentRoute, setCurrentRoute] = React.useState(
         '/admin-dashboard/users'
@@ -30,11 +33,20 @@ const AdminDashboard = () => {
     };
 
     React.useEffect(() => {
-        navigate('/admin-dashboard/cars');
+        navigate('/admin-dashboard/users');
         // dispatch(getCarsAction());
         // dispatch(getAppointmentsAction());
         // dispatch(getManufacturersAction());
     }, []);
+    React.useEffect(() => {
+        if (Object.values(AppRoutes).indexOf(location.pathname) == -1) {
+            setCurrentRoute('/admin-dashboard/users');
+        }
+        // navigate('/admin-dashboard/users');
+        // dispatch(getCarsAction());
+        // dispatch(getAppointmentsAction());
+        // dispatch(getManufacturersAction());
+    }, [location.pathname]);
 
     return (
         <>
@@ -65,7 +77,7 @@ const AdminDashboard = () => {
                         <Box display='flex' alignItems='center'>
                             <SearchBar />
                         </Box>
-                        <button onClick={() => navigate(AppRoutes.LOGIN)}>
+                        <button onClick={() => dispatch(logout())}>
                             logout
                         </button>
                     </Box>

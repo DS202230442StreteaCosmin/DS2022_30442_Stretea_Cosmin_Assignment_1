@@ -53,8 +53,7 @@ export class AuthController {
   }
 
   //   @UseGuards(JwtAuthGuard)
-  @HasRoles(UserRole.CLIENT)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('profile')
   getProfile(@Request() req) {

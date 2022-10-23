@@ -8,6 +8,8 @@ import AdminDashboard from './features/AdminDashboard/AdminDashboard';
 import CustomerDashboard from './features/CustomerDashboard/CustomerDashboard';
 import { AppRoutes } from './router/AppRoutes';
 import NotFound from './features/NotFound/NotFound';
+import ProtectedRoute from './router/ProtectedRoute';
+import AdminRoute from './router/AdminRoute';
 
 function App() {
     return (
@@ -18,11 +20,19 @@ function App() {
                 <Route path={AppRoutes.REGISTER} element={<RegisterScreen />} />
                 <Route
                     path={`${AppRoutes.ADMIN_DASHBOARD}/*`}
-                    element={<AdminDashboard />}
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
                 />
                 <Route
-                    path={AppRoutes.DASHBOARD}
-                    element={<CustomerDashboard />}
+                    path={`${AppRoutes.DASHBOARD}/*`}
+                    element={
+                        <ProtectedRoute>
+                            <CustomerDashboard />
+                        </ProtectedRoute>
+                    }
                 />
                 <Route path={'*'} element={<NotFound />} />
                 {/* <CustomerDashboard /> */}
