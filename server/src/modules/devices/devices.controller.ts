@@ -15,8 +15,8 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { EntityNotFoundError } from 'typeorm';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { HasRoles } from '../auth/has-roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 

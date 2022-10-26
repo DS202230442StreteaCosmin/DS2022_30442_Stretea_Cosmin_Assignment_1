@@ -1,19 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateConsumptionDto } from './dto/create-consumption.dto';
+import { Consumption } from './entities/consumption.entity';
 
 @Injectable()
 export class DevicesService {
   @InjectRepository(Device)
   private devicesRepository: Repository<Device>;
+  @InjectRepository(Consumption)
+  private consumptionsRepository: Repository<Consumption>;
 
   async create(createDeviceDto: CreateDeviceDto) {
     const createdDevice = this.devicesRepository.create({
       ...createDeviceDto,
-      user: null,
+      users: [],
     });
     await this.devicesRepository.save(createdDevice);
     return createdDevice;
@@ -42,5 +46,41 @@ export class DevicesService {
     });
     await this.devicesRepository.remove(removedDevice);
     return removedDevice;
+  }
+
+  async addConsumtionToDevice(
+    deviceId: string,
+    consumption: CreateConsumptionDto,
+  ) {
+    const consumptionEntity = await this.consumptionsRepository.create(
+      consumption,
+    );
+    const deviceEntity = await this.devicesRepository.findOneOrFail({
+      where: { id: deviceId },
+    });
+    deviceEntity.consumptions.push(consumptionEntity);
+    await this.devicesRepository.save(deviceEntity);
+    return consumptionEntity;
+  }
+
+  async getConsumptionsForDeviceFromInterval(
+    deviceId: string,
+    startDate: Date,
+    endDate: Date,
+  ) {
+    return await this.consumptionsRepository.find({
+      where: {
+        device: { id: deviceId },
+        timestamp: Between(startDate, endDate),
+      },
+    });
+  }
+
+  async removeConsumptionFromDevice(consumptionId: string) {
+    const consumption = await this.consumptionsRepository.findOneOrFail({
+      where: { id: consumptionId },
+    });
+    await this.consumptionsRepository.remove(consumption);
+    return consumption;
   }
 }

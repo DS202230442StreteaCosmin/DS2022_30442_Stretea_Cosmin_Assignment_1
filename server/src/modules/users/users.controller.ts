@@ -14,11 +14,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
-import { LocalAuthGuard } from '../auth/local-auth.guard';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { HasRoles } from '../auth/has-roles.decorator';
 import { UserRole } from './entities/user.entity';
-import { RolesGuard } from '../auth/roles.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @ApiTags('users')
 @Controller('users')

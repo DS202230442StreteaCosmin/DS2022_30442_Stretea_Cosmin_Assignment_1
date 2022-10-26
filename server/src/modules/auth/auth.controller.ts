@@ -15,10 +15,10 @@ import { UserRole } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { HasRoles } from './has-roles.decorator';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { JwtStrategy } from './jwt.strategy';
-import { LocalAuthGuard } from './local-auth.guard';
-import { RolesGuard } from './roles.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @ApiTags('auth')
 @Controller('auth')

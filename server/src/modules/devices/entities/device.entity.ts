@@ -1,5 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Consumption } from './consumption.entity';
 
 @Entity()
 export class Device {
@@ -15,6 +24,9 @@ export class Device {
   @Column()
   maxHourlyConsumption: number;
 
-  @ManyToOne(() => User, (user) => user.devices)
-  user: User | null;
+  @ManyToMany(() => User, (user) => user.devices)
+  users: User[];
+
+  @OneToMany(() => Consumption, (consumption) => consumption.device)
+  consumptions: Consumption[];
 }

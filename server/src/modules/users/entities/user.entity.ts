@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Device } from '../../devices/entities/device.entity';
 
 export enum UserRole {
@@ -27,6 +34,7 @@ export class User {
   })
   role: UserRole;
 
-  @OneToMany(() => Device, (device) => device.user)
+  @ManyToMany(() => Device, (device) => device.users)
+  @JoinTable()
   devices: Device[];
 }
