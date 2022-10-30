@@ -7,7 +7,7 @@ import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 export const SALT_OR_ROUNDS = 10;
-export const DEFAULT_USER_PASSWORD = 'client123';
+export const DEFAULT_USER_PASSWORD = 'client';
 
 @Injectable()
 export class UsersService {
@@ -41,8 +41,10 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
-  findById(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: string) {
+    return await this.usersRepository.findOneOrFail({
+      where: { id: id },
+    });
   }
 
   async findByEmail(email: string) {
@@ -51,11 +53,18 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    await this.usersRepository.update({ id: id }, updateUserDto);
+    return this.usersRepository.findOneOrFail({
+      where: { id: id },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const removedUser = await this.usersRepository.findOneOrFail({
+      where: { id: id },
+    });
+    await this.usersRepository.remove(removedUser);
+    return removedUser;
   }
 }

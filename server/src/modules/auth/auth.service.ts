@@ -16,10 +16,6 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
-    console.log(
-      '🚀 ~ file: auth.service.ts ~ line 19 ~ AuthService ~ validateUser ~ user',
-      user.passwordHash,
-    );
 
     const passwordValid = await bcrypt.compare(password, user.passwordHash);
     if (!user) {
@@ -36,17 +32,13 @@ export class AuthService {
   }
 
   async login(user: any) {
-    console.log(
-      '🚀 ~ file: auth.service.ts ~ line 39 ~ AuthService ~ login ~ user',
-      user,
-    );
     const payload = {
       email: user.email,
       sub: user.id,
       role: user.role,
     };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { expiresIn: '1h' }),
     };
   }
 }

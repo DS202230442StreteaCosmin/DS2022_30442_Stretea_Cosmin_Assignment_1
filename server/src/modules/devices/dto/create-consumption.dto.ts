@@ -6,7 +6,4 @@ export class CreateConsumptionDto {
 
   @ApiProperty()
   value: number;
-
-  @ApiProperty()
-  deviceId: string;
 }

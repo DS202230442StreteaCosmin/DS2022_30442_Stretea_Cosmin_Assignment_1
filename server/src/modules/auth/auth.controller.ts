@@ -29,16 +29,8 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(
-    @Body() createUserDto: CreateUserDto,
-    // @Res({ passthrough: true }) response: Response,
-  ) {
+  async signup(@Body() createUserDto: CreateUserDto) {
     const createdUser = await this.usersService.createUser(createUserDto);
-
-    // if(!createdUser) {
-
-    //     return
-    // }
     return await this.authService.login({
       id: createdUser.id,
       email: createdUser.email,

@@ -6,6 +6,7 @@ import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateConsumptionDto } from './dto/create-consumption.dto';
 import { Consumption } from './entities/consumption.entity';
+import { DeviceTimeInterval } from './dto/device-interval.dto';
 
 @Injectable()
 export class DevicesService {
@@ -48,7 +49,7 @@ export class DevicesService {
     return removedDevice;
   }
 
-  async addConsumtionToDevice(
+  async addConsumptionToDevice(
     deviceId: string,
     consumption: CreateConsumptionDto,
   ) {
@@ -58,6 +59,11 @@ export class DevicesService {
     const deviceEntity = await this.devicesRepository.findOneOrFail({
       where: { id: deviceId },
     });
+
+    if (!deviceEntity.consumptions) {
+      deviceEntity.consumptions = [];
+    }
+
     deviceEntity.consumptions.push(consumptionEntity);
     await this.devicesRepository.save(deviceEntity);
     return consumptionEntity;

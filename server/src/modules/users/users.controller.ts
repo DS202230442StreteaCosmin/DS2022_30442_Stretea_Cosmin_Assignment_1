@@ -46,7 +46,15 @@ export class UsersController {
   @ApiBearerAuth()
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.usersService.findById(+id);
+    return this.usersService.findById(id);
+  }
+
+  @HasRoles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Get(':id')
+  findByEmail(@Param('email') email: string) {
+    return this.usersService.findByEmail(email);
   }
 
   @HasRoles(UserRole.ADMIN)
@@ -54,7 +62,7 @@ export class UsersController {
   @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @HasRoles(UserRole.ADMIN)
@@ -62,6 +70,6 @@ export class UsersController {
   @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }
