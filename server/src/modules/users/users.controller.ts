@@ -57,6 +57,13 @@ export class UsersController {
     return this.usersService.findByEmail(email);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get(':id/devices')
+  findAllDevices(@Param('id') userId: string) {
+    return this.usersService.getDevicesForUser(userId);
+  }
+
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()

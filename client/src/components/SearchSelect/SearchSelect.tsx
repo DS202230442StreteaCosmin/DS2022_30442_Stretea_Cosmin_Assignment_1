@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 
 interface SearchSelectProps {
     options: any[];
+    label: string;
 }
 
 const SearchSelect = (props: SearchSelectProps) => {
@@ -14,7 +15,9 @@ const SearchSelect = (props: SearchSelectProps) => {
             id='combo-box-demo'
             options={props.options}
             sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label='User' />}
+            renderInput={(params) => (
+                <TextField {...params} label={props.label} />
+            )}
         />
     );
 };

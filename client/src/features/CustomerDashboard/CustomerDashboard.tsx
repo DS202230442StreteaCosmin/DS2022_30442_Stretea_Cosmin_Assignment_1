@@ -114,6 +114,7 @@ const CustomerDashboard = () => {
                             { label: 'option4' },
                             { label: 'option5' },
                         ]}
+                        label='Device'
                     />
 
                     <DatePicker

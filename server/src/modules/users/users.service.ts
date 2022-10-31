@@ -53,6 +53,14 @@ export class UsersService {
     });
   }
 
+  async getDevicesForUser(id: string) {
+    const currentUser = await this.usersRepository.findOneOrFail({
+      where: { id: id },
+    });
+
+    return currentUser.devices;
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     await this.usersRepository.update({ id: id }, updateUserDto);
     return this.usersRepository.findOneOrFail({

@@ -118,6 +118,7 @@ const Mappings = () => {
                         { label: 'option4' },
                         { label: 'option5' },
                     ]}
+                    label='Device'
                 />
                 <Button
                     size='large'
