@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserByAdminDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { Device } from '../devices/entities/device.entity';
 
 export const SALT_OR_ROUNDS = 10;
 export const DEFAULT_USER_PASSWORD = 'client';
@@ -13,10 +14,12 @@ export const DEFAULT_USER_PASSWORD = 'client';
 export class UsersService {
   @InjectRepository(User)
   private usersRepository: Repository<User>;
+  @InjectRepository(Device)
+  private devicesRepository: Repository<Device>;
 
-  async createClientByAdmin(createUserDto: CreateUserDto) {
+  async createClientByAdmin(createUserByAdminDto: CreateUserByAdminDto) {
     const resultedUser = await this.createUser({
-      ...createUserDto,
+      ...createUserByAdminDto,
       password: DEFAULT_USER_PASSWORD,
     });
 
@@ -56,6 +59,7 @@ export class UsersService {
   async getDevicesForUser(id: string) {
     const currentUser = await this.usersRepository.findOneOrFail({
       where: { id: id },
+      relations: { devices: true },
     });
 
     return currentUser.devices;
@@ -74,5 +78,43 @@ export class UsersService {
     });
     await this.usersRepository.remove(removedUser);
     return removedUser;
+  }
+
+  async addDeviceToUser(userId: string, deviceId: string) {
+    const user = await this.usersRepository.findOneOrFail({
+      where: { id: userId },
+      relations: { devices: true },
+    });
+
+    const device = await this.devicesRepository.findOneOrFail({
+      where: { id: deviceId },
+    });
+
+    if (!user.devices) {
+      user.devices = [];
+    }
+
+    user.devices.push(device);
+    this.usersRepository.save(user);
+
+    return user;
+  }
+
+  async removeDeviceFromUser(userId: string, deviceId: string) {
+    const user = await this.usersRepository.findOneOrFail({
+      where: { id: userId },
+      relations: { devices: true },
+    });
+
+    if (!user.devices) {
+      user.devices = [];
+    }
+
+    const newDevicesArray = user.devices.filter((d) => d.id !== deviceId);
+
+    user.devices = newDevicesArray;
+    this.usersRepository.save(user);
+
+    return user;
   }
 }

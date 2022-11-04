@@ -1,27 +1,24 @@
 import { api } from '../../api/api';
 import { setUser } from '../../store/user/userSlice';
-import { Device } from '../device/model';
-import { IAuthTokenResponse, ILoginUser, IRegisterUser, IUser } from './model';
+import {
+    Consumption,
+    Device,
+    IAuthTokenResponse,
+    ILoginUser,
+    IRegisterUser,
+    IUser,
+} from './model';
 
-export const userSlice = api.injectEndpoints({
+export const deviceSlice = api.injectEndpoints({
     endpoints: (builder) => ({
-        userDevices: builder.query<Device[], string>({
-            query: (id) => ({
-                url: `/users/${id}/devices`,
+        deviceConsumptions: builder.query<
+            Consumption[],
+            { id: string; startDate: string; endDate: string }
+        >({
+            query: ({ id, startDate, endDate }) => ({
+                url: `devices/consumption/${id}?startDate=${startDate}&endDate=${endDate}`,
+                method: 'GET',
             }),
-            // async onQueryStarted(_args, { dispatch, queryFulfilled }) {
-            //     try {
-            //         const { access_token } = (await queryFulfilled).data;
-            //         window.localStorage.setItem('access_token', access_token);
-            //         await dispatch(
-            //             authSlice.endpoints.getProfile.initiate(undefined, {
-            //                 forceRefetch: true,
-            //             })
-            //         );
-            //     } catch (error) {
-            //         console.log(error);
-            //     }
-            // },
         }),
         // signup: builder.mutation<IAuthTokenResponse, IRegisterUser>({
         //     query: (body) => ({
@@ -59,6 +56,7 @@ export const userSlice = api.injectEndpoints({
     }),
 });
 
-export const { useUserDevicesQuery } = userSlice;
+export const { useDeviceConsumptionsQuery, useLazyDeviceConsumptionsQuery } =
+    deviceSlice;
 
 // export const selectUsersResult = authSlice.endpoints.getUsers.select();

@@ -5,6 +5,9 @@ export class CreateDeviceDto {
   description: string;
 
   @ApiProperty()
+  name: string;
+
+  @ApiProperty()
   address: string;
 
   @ApiProperty()

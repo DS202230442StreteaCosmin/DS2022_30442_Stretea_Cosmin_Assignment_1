@@ -1,87 +1,95 @@
-import { TabContext, TabPanel } from '@mui/lab';
-import TabList from '@mui/lab/TabList';
-import { Box, Tab, TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from '../../components/SerchBar/SearchBar';
-import { AppRoutes } from '../../router/AppRoutes';
 
-// import { getAppointmentsAction } from "../../stores/appointments/actions";
-// import { getCarsAction } from "../../stores/car/actions";
-// import { getManufacturersAction } from "../../stores/manufacturer/actions";
-// import { useAppDispatch, useAppSelector } from "../../stores/store";
-// import { initUserData } from "../../stores/user/actions";
-// import { logout, setSearchInput } from "../../stores/user/slice";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import SearchSelect from '../../components/SearchSelect/SearchSelect';
 import { DatePicker } from '@mui/x-date-pickers';
-import { Dayjs } from 'dayjs';
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-} from 'recharts';
-import { useAppDispatch } from '../../store/store';
+import dayjs, { Dayjs } from 'dayjs';
+import { Bar, BarChart, Legend, Tooltip, XAxis, YAxis } from 'recharts';
+import { useLazyDeviceConsumptionsQuery } from '../../services/device/device';
+import { Consumption, Device } from '../../services/device/model';
+import { useUserDevicesQuery } from '../../services/user/user';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { logout } from '../../store/user/userSlice';
 
-const data = [
-    {
-        name: 'Page A',
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: 'Page B',
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-    },
-    {
-        name: 'Page C',
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
-    },
-    {
-        name: 'Page D',
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-    },
-    {
-        name: 'Page E',
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
-    },
-    {
-        name: 'Page F',
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
-    },
-    {
-        name: 'Page G',
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
-    },
-];
-
 const CustomerDashboard = () => {
+    const currentUser = useAppSelector((state) => state.userState.user);
+    const [dateInterval, setDateInterval] = React.useState<
+        { start: string; end: string } | undefined
+    >(undefined);
+    const [currentDevice, setCurrentDevice] = React.useState<
+        Device | undefined
+    >(undefined);
+    const { data: userDevices, isFetching: areDevicesFetching } =
+        useUserDevicesQuery(currentUser?.id ?? '');
+    const [
+        triggerDeviceConsumptions,
+        { data: deviceConsumptions, isFetching: areConsumptionsFetching },
+    ] = useLazyDeviceConsumptionsQuery();
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [date, setDate] = React.useState<Dayjs | null>(null);
 
+    React.useEffect(() => {
+        if (!date) {
+            return;
+        }
+
+        const interval = {
+            start: new Date(dayjs(date).format('YYYY-MM-DD')).toISOString(),
+            end: new Date(
+                dayjs(date).add(1, 'day').format('YYYY-MM-DD')
+            ).toISOString(),
+        };
+        setDateInterval(interval);
+    }, [date]);
+
+    React.useEffect(() => {
+        if (!currentDevice || !dateInterval) {
+            return;
+        }
+
+        triggerDeviceConsumptions({
+            id: currentDevice.id,
+            startDate: dateInterval.start,
+            endDate: dateInterval.end,
+        });
+
+        getChartDataFromConsumptions([]);
+    }, [currentDevice, dateInterval]);
+
+    const getChartDataFromConsumptions = (consumptions: Consumption[]) => {
+        let hourDataMapping = new Map<string, number>();
+        let chartDataArr: { consumption: number; hour: string }[] = [];
+
+        const chartXKeys = Array.from(Array(24).keys()).map(
+            (hour) => `${hour.toString().padStart(2, '0')}:00`
+        );
+        chartXKeys.forEach((key) => hourDataMapping.set(key, 0));
+
+        consumptions.forEach((consumption) => {
+            const parsedTimeKey =
+                new Date(consumption.timestamp)
+                    .toLocaleTimeString('en', {
+                        timeStyle: 'short',
+                        hour12: false,
+                        timeZone: 'UTC',
+                    })
+                    .slice(0, -2) + '00';
+            hourDataMapping.set(parsedTimeKey, consumption.value);
+        });
+
+        hourDataMapping.forEach((value, key) =>
+            chartDataArr.push({ consumption: value, hour: key })
+        );
+
+        return chartDataArr;
+    };
+
     return (
         <>
             <Box sx={{ width: '100%', typography: 'body1' }}>
-                {/* <TabContext value={currentRoute}> */}
                 <Box
                     sx={{
                         borderBottom: 1,
@@ -91,52 +99,31 @@ const CustomerDashboard = () => {
                         padding: 2,
                     }}
                 >
-                    {/* <TabList
-                        onChange={handleChange}
-                        aria-label='lab API tabs example'
-                    >
-                        <Tab label='Users' value='/admin-dashboard/users' />
-                        <Tab label='Devices' value='/admin-dashboard/devices' />
-                        <Tab
-                            label='Mappings'
-                            value='/admin-dashboard/mappings'
-                        />
-                    </TabList> */}
-                    {/* <Box display='flex' alignItems='center'>
-                        <SearchBar />
-                    </Box> */}
-
-                    <SearchSelect
-                        options={[
-                            { label: 'option1' },
-                            { label: 'option2' },
-                            { label: 'option3' },
-                            { label: 'option4' },
-                            { label: 'option5' },
-                        ]}
-                        label='Device'
+                    <Autocomplete
+                        disabled={areDevicesFetching || !!!userDevices}
+                        disablePortal
+                        id='combo-box-demo'
+                        options={userDevices ?? []}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => (
+                            <TextField {...params} label={'Device'} />
+                        )}
+                        value={currentDevice}
+                        getOptionLabel={(option) => option.name}
+                        onChange={(_event: any, newValue: Device | null) => {
+                            setCurrentDevice(newValue ?? undefined);
+                        }}
                     />
 
                     <DatePicker
                         label='Pick a date'
                         value={date}
-                        onChange={(newValue) => {
-                            setDate(newValue);
-                        }}
+                        onChange={(newValue) => setDate(newValue)}
                         renderInput={(params) => <TextField {...params} />}
                     />
                     <button onClick={() => dispatch(logout())}>logout</button>
                 </Box>
-                {/* <TabPanel value='/admin-dashboard/users'>
-                    <Users />
-                </TabPanel>
-                <TabPanel value='/admin-dashboard/devices'>
-                    <Devices />
-                </TabPanel>
-                <TabPanel value='/admin-dashboard/mappings'>
-                    <Mappings />
-                </TabPanel> */}
-                {/* </TabContext> */}
+
                 <Box
                     sx={{
                         display: 'flex',
@@ -144,24 +131,31 @@ const CustomerDashboard = () => {
                         paddingTop: 4,
                     }}
                 >
-                    <BarChart
-                        width={1000}
-                        height={600}
-                        data={data}
-                        margin={{
-                            top: 5,
-                            right: 30,
-                            left: 20,
-                            bottom: 5,
-                        }}
-                    >
-                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                        <XAxis dataKey='name' />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey='pv' fill='#8884d8' />
-                    </BarChart>
+                    {deviceConsumptions === undefined ? (
+                        <Box> Select a device and pick a date</Box>
+                    ) : deviceConsumptions.length === 0 ? (
+                        <Box>No data available for this date</Box>
+                    ) : (
+                        <BarChart
+                            width={1000}
+                            height={600}
+                            data={getChartDataFromConsumptions(
+                                deviceConsumptions
+                            )}
+                            margin={{
+                                top: 5,
+                                right: 30,
+                                left: 20,
+                                bottom: 5,
+                            }}
+                        >
+                            <XAxis dataKey='hour' />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey='consumption' fill='#8884d8' />
+                        </BarChart>
+                    )}
                 </Box>
             </Box>
         </>

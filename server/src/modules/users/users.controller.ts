@@ -4,17 +4,15 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
+  Put,
   Post,
   UseGuards,
-  Request,
+  Query,
 } from '@nestjs/common';
 import { SALT_OR_ROUNDS, UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserByAdminDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import * as bcrypt from 'bcrypt';
-import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { HasRoles } from '../auth/has-roles.decorator';
 import { UserRole } from './entities/user.entity';
@@ -29,8 +27,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createClientByAdmin(createUserDto);
+  async create(@Body() createUserByAdminDto: CreateUserByAdminDto) {
+    return this.usersService.createClientByAdmin(createUserByAdminDto);
   }
 
   @HasRoles(UserRole.ADMIN)
@@ -44,17 +42,17 @@ export class UsersController {
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
-  @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.usersService.findById(id);
+  @Get('byEmail')
+  findByEmail(@Query('email') email: string) {
+    return this.usersService.findByEmail(email);
   }
 
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @Get(':id')
-  findByEmail(@Param('email') email: string) {
-    return this.usersService.findByEmail(email);
+  findById(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -67,7 +65,7 @@ export class UsersController {
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -78,5 +76,27 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @HasRoles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Post(':userId/device/:deviceId')
+  async addDeviceToUser(
+    @Param('userId') userId: string,
+    @Param('deviceId') deviceId: string,
+  ) {
+    return this.usersService.addDeviceToUser(userId, deviceId);
+  }
+
+  @HasRoles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Delete(':userId/device/:deviceId')
+  async removeDeviceFromUser(
+    @Param('userId') userId: string,
+    @Param('deviceId') deviceId: string,
+  ) {
+    return this.usersService.removeDeviceFromUser(userId, deviceId);
   }
 }

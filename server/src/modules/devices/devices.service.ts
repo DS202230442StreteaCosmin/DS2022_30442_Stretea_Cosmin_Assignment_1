@@ -53,13 +53,12 @@ export class DevicesService {
     deviceId: string,
     consumption: CreateConsumptionDto,
   ) {
-    const consumptionEntity = await this.consumptionsRepository.create(
-      consumption,
-    );
+    const consumptionEntity = this.consumptionsRepository.create(consumption);
 
     await this.consumptionsRepository.save(consumptionEntity);
     const deviceEntity = await this.devicesRepository.findOneOrFail({
       where: { id: deviceId },
+      relations: { consumptions: true },
     });
 
     if (!deviceEntity.consumptions) {

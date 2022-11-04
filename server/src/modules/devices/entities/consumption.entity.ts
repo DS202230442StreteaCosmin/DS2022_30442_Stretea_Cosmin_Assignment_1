@@ -12,6 +12,6 @@ export class Consumption {
   @Column()
   value: number;
 
-  @ManyToOne(() => Device)
+  @ManyToOne(() => Device, (device) => device.consumptions)
   device: Device;
 }

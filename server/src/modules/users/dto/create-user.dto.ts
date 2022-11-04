@@ -10,3 +10,11 @@ export class CreateUserDto {
   @ApiProperty()
   password: string;
 }
+
+export class CreateUserByAdminDto {
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  email: string;
+}

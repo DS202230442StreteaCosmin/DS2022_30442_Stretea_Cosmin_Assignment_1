@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   UseFilters,
   UseGuards,
   Query,
+  Put,
   BadRequestException,
 } from '@nestjs/common';
 import { DevicesService } from './devices.service';
@@ -57,7 +57,7 @@ export class DevicesController {
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateDeviceDto: UpdateDeviceDto) {
     return this.devicesService.update(id, updateDeviceDto);
   }
@@ -73,20 +73,19 @@ export class DevicesController {
   @HasRoles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
-  @Post('consumption/:id')
+  @Post('consumption/:deviceId')
   addConsumptionToDevice(
-    @Param('id') id: string,
+    @Param('deviceId') deviceId: string,
     @Body() consumption: CreateConsumptionDto,
   ) {
-    return this.devicesService.addConsumptionToDevice(id, consumption);
+    return this.devicesService.addConsumptionToDevice(deviceId, consumption);
   }
 
-  @HasRoles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Get('consumption/:id')
+  @Get('consumption/:deviceId')
   getConsumptionsForDeviceFromInterval(
-    @Param('id') id: string,
+    @Param('deviceId') deviceId: string,
     @Query('startDate') startDate: Date,
     @Query('endDate') endDate: Date,
   ) {
@@ -94,7 +93,7 @@ export class DevicesController {
       throw new BadRequestException('startDate and endDate are required');
     }
     return this.devicesService.getConsumptionsForDeviceFromInterval(
-      id,
+      deviceId,
       startDate,
       endDate,
     );

@@ -19,12 +19,15 @@ export class Device {
   description: string;
 
   @Column()
+  name: string;
+
+  @Column()
   address: string;
 
   @Column()
   maxHourlyConsumption: number;
 
-  @ManyToMany(() => User, (user) => user.devices)
+  @ManyToMany(() => User, (user) => user.devices, { lazy: true })
   users: User[];
 
   @OneToMany(() => Consumption, (consumption) => consumption.device)

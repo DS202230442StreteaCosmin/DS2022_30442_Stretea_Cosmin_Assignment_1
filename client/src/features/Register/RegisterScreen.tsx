@@ -13,28 +13,38 @@ import Paper from '@mui/material/Paper';
 import React from 'react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../router/AppRoutes';
-import { useGetProfileQuery, useLoginMutation } from '../../services/auth/auth';
-import { ILoginUser, UserRoles } from '../../services/auth/model';
+import {
+    useGetProfileQuery,
+    useLoginMutation,
+    useSignupMutation,
+} from '../../services/auth/auth';
+import {
+    ILoginUser,
+    IRegisterUser,
+    UserRoles,
+} from '../../services/auth/model';
 import { useAppSelector } from '../../store/store';
 
 const RegisterScreen = () => {
     const [email, setEmail] = React.useState('');
+    const [name, setName] = React.useState('');
     const [password, setPassword] = React.useState('');
     const navigate = useNavigate();
 
     const currentUser = useAppSelector((state) => state.userState.user);
     const { data: profile, isFetching } = useGetProfileQuery(undefined);
 
-    const [login, { isLoading, isError }] = useLoginMutation();
+    const [signup, { isLoading, isError }] = useSignupMutation();
 
-    const handleLogin = async () => {
+    const handleSignUp = async () => {
         try {
-            const bodyData: ILoginUser = {
+            const bodyData: IRegisterUser = {
+                name: name,
                 email: email,
                 password: password,
             };
 
-            await login(bodyData).unwrap();
+            await signup(bodyData).unwrap();
         } catch (error) {}
     };
 
@@ -109,6 +119,18 @@ const RegisterScreen = () => {
                             margin='normal'
                             required
                             fullWidth
+                            id='name'
+                            label='Name'
+                            name='name'
+                            autoComplete='name'
+                            autoFocus
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <TextField
+                            margin='normal'
+                            required
+                            fullWidth
                             id='email'
                             label='Email Address'
                             name='email'
@@ -117,6 +139,7 @@ const RegisterScreen = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
+
                         <TextField
                             margin='normal'
                             required
@@ -137,6 +160,7 @@ const RegisterScreen = () => {
                             sx={{ mt: 3, mb: 2 }}
                             onClick={(e) => {
                                 e.preventDefault();
+                                handleSignUp();
                                 // dispatch(signupAction(email, password));
                             }}
                         >
