@@ -25,7 +25,15 @@ export interface Device {
     name: string;
     address: string;
     maxHourlyConsumption: number;
-    consumptions: Consumption[];
+    consumptions?: Consumption[];
+}
+
+export interface CreateDevice {
+    id?: string;
+    description: string;
+    name: string;
+    address: string;
+    maxHourlyConsumption: number;
 }
 
 export interface IRegisterUser extends ILoginUser {

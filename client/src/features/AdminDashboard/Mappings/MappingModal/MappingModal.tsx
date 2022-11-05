@@ -1,22 +1,72 @@
+import React from 'react';
+
 import {
+    Box,
+    Button,
     FormControl,
     InputLabel,
     MenuItem,
     Modal,
     Select,
     Typography,
-    Box,
 } from '@mui/material';
-import React from 'react';
+import { api } from '../../../../api/api';
+import { useGetAllDevicesQuery } from '../../../../services/device/device';
+import { Device } from '../../../../services/device/model';
+import { useAddDeviceToUserMutation } from '../../../../services/user/user';
 
 type Props = {
     isOpen: boolean;
+    userId: string;
+    userDevices?: Device[];
     onClose: () => void;
     // onSubmit: (id: number, car: CarDto) => void;
     onSubmit: (id: number, car: object) => void;
 };
 
+const getDifference = (array1: Device[], array2: Device[]) => {
+    return array1.filter((object1) => {
+        return !array2.some((object2) => {
+            return object1.id === object2.id;
+        });
+    });
+};
+
 const MappingModal = (props: Props) => {
+    const { data: devices, isFetching: areDevicesLoading } =
+        useGetAllDevicesQuery(undefined);
+
+    const availableDevices = getDifference(
+        devices ?? [],
+        props.userDevices ?? []
+    );
+
+    const [selectedDevice, setSelectedDevice] = React.useState<
+        string | undefined
+    >(undefined);
+
+    const [addDeviceToUser] = useAddDeviceToUserMutation();
+
+    const handleClose = () => {
+        setSelectedDevice(undefined);
+        props.onClose();
+    };
+
+    const handleSubmit = async () => {
+        try {
+            await addDeviceToUser({
+                userId: props.userId,
+                deviceId: selectedDevice!,
+            });
+            handleClose();
+        } catch (error) {
+            console.log(
+                '🚀 ~ file: MappingModal.tsx ~ line 60 ~ handleSubmit ~ error',
+                error
+            );
+        }
+    };
+
     return (
         <Modal
             style={{
@@ -26,7 +76,7 @@ const MappingModal = (props: Props) => {
                 alignContent: 'center',
             }}
             open={props.isOpen}
-            onClose={props.onClose}
+            onClose={handleClose}
         >
             <Box
                 sx={{
@@ -49,26 +99,40 @@ const MappingModal = (props: Props) => {
                     <InputLabel id='demo-simple-select-label'>
                         Device
                     </InputLabel>
-                    <Select
-                        labelId='demo-simple-select-label'
-                        id='demo-simple-select'
-                        // defaultValue={currentCarDto.manufacturerId}
-                        // value={currentCarDto.manufacturerId}
-                        label='Device'
-                        // onChange={(e) => {
-                        //     setCurrentCarDto({
-                        //         ...currentCarDto,
-                        //         manufacturerId: +e.target.value,
-                        //     });
-                        // }}
-                    >
-                        {/* {manufacturers.map((e) => (
-                            <MenuItem value={e.id}>{e.name}</MenuItem>
-                        ))} */}
-                        <MenuItem value={'1'}>{1}</MenuItem>
+                    {!availableDevices ? (
+                        <Box>Loading...</Box>
+                    ) : (
+                        <Select
+                            labelId='demo-simple-select-label'
+                            id='demo-simple-select'
+                            // defaultValue={currentCarDto.manufacturerId}
+                            value={selectedDevice}
+                            onChange={(e) => setSelectedDevice(e.target.value)}
+                            label='Device'
+                            // onChange={(e) => {
+                            //     setCurrentCarDto({
+                            //         ...currentCarDto,
+                            //         manufacturerId: +e.target.value,
+                            //     });
+                            // }}
+                        >
+                            {availableDevices.map((e) => (
+                                <MenuItem value={e.id}>{e.name}</MenuItem>
+                            ))}
+                            {/* <MenuItem value={'1'}>{1}</MenuItem>
                         <MenuItem value={'2'}>{2}</MenuItem>
-                        <MenuItem value={'3'}>{3}</MenuItem>
-                    </Select>
+                        <MenuItem value={'3'}>{3}</MenuItem> */}
+                        </Select>
+                    )}
+                    <Button
+                        disabled={!selectedDevice}
+                        sx={{ marginTop: 2, textTransform: 'none' }}
+                        variant='contained'
+                        color='primary'
+                        onClick={handleSubmit}
+                    >
+                        Submit
+                    </Button>
                 </FormControl>
             </Box>
         </Modal>

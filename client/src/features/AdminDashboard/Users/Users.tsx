@@ -19,6 +19,11 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UserModal from './UserModal/UserModal';
+import {
+    useDeleteUserMutation,
+    useGetAllUsersQuery,
+} from '../../../services/user/user';
+import { CreateUserByAdmin } from '../../../services/user/model';
 // import { useAppDispatch, useAppSelector } from '../../../stores/store';
 // import CarItem from './CarItem/CarItem';
 // import { deleteCar, setCurrentCar } from '../../../stores/car/slice';
@@ -35,20 +40,20 @@ import UserModal from './UserModal/UserModal';
 
 const Users = () => {
     // const cars = useAppSelector((state) => state.car.cars);
-    const cars = [
-        { id: 1, email: 'cosmin1.stretea@gmail.com', name: 'coco1' },
-        { id: 2, email: 'cosmin2.stretea@gmail.com', name: 'coco2' },
-        { id: 3, email: 'cosmin3.stretea@gmail.com', name: 'coco3' },
-        { id: 4, email: 'cosmin4.stretea@gmail.com', name: 'coco4' },
-        { id: 5, email: 'cosmin5.stretea@gmail.com', name: 'coco5' },
-        { id: 6, email: 'cosmin6.stretea@gmail.com', name: 'coco6' },
-        { id: 7, email: 'cosmin7.stretea@gmail.com', name: 'coco7' },
-    ];
     // const searchCriteria = useAppSelector((state) => state.user.searchInput);
     // const dispatch = useAppDispatch();
     // const modal = useAppSelector((state) => state.user.isCarModalOpen);
 
+    const [deleteUser, { isLoading: isDeleteLoading }] =
+        useDeleteUserMutation();
+
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [selectedUser, setSelectedUser] = React.useState<
+        CreateUserByAdmin | undefined
+    >(undefined);
+
+    const { data: users, isFetching: areUsersLoading } =
+        useGetAllUsersQuery(undefined);
 
     // const deleteHandler = (id: number) => {
     //     dispatch(deleteCarAction(id));
@@ -102,49 +107,71 @@ const Users = () => {
                         />
                     ))}
             </Grid> */}
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell align='right'>Email</TableCell>
-                            <TableCell align='right'>Name</TableCell>
-                            <TableCell align='right'>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {cars.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                sx={{
-                                    '&:last-child td, &:last-child th': {
-                                        border: 0,
-                                    },
-                                }}
-                            >
-                                <TableCell component='th' scope='row'>
-                                    {row.id}
-                                </TableCell>
-                                <TableCell align='right'>{row.email}</TableCell>
-                                <TableCell align='right'>{row.name}</TableCell>
-                                <TableCell align='right'>
-                                    <>
-                                        <IconButton aria-label='delete'>
-                                            <EditIcon />
-                                        </IconButton>
-                                        <IconButton aria-label='delete'>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </>
-                                </TableCell>
+            {users && (
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Id</TableCell>
+                                <TableCell align='right'>Email</TableCell>
+                                <TableCell align='right'>Name</TableCell>
+                                <TableCell align='right'>Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {users.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    sx={{
+                                        '&:last-child td, &:last-child th': {
+                                            border: 0,
+                                        },
+                                    }}
+                                >
+                                    <TableCell component='th' scope='row'>
+                                        {row.id}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {row.email}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        <>
+                                            <IconButton
+                                                aria-label='delete'
+                                                onClick={() => {
+                                                    setSelectedUser(row);
+                                                    setIsModalOpen(true);
+                                                }}
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                aria-label='delete'
+                                                onClick={async () =>
+                                                    await deleteUser(row.id)
+                                                }
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
             <UserModal
+                key={selectedUser?.id}
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                user={selectedUser}
+                onClose={() => {
+                    setSelectedUser(undefined);
+                    setIsModalOpen(false);
+                }}
                 onSubmit={() => {}}
             />
         </>

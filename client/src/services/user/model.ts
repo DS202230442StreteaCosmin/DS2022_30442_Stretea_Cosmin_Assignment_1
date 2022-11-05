@@ -22,3 +22,9 @@ export interface ILoginUser {
 export interface IRegisterUser extends ILoginUser {
     name: string;
 }
+
+export interface CreateUserByAdmin {
+    name: string;
+    email: string;
+    id?: string;
+}

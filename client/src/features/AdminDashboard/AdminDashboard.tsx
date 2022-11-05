@@ -5,6 +5,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
 import { AppRoutes } from '../../router/AppRoutes';
+import { useGetAllUsersQuery } from '../../services/user/user';
 import { useAppDispatch } from '../../store/store';
 import { logout } from '../../store/user/userSlice';
 import Devices from './Devices/Devices';
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
     const [currentRoute, setCurrentRoute] = React.useState(
         '/admin-dashboard/users'
     );
+
     // const userId = useAppSelector((state) => state.user.user.id);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {

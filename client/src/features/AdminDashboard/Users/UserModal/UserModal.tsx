@@ -13,6 +13,12 @@ import {
 import Alert from '@mui/material/Alert';
 import React from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import {
+    useCreateUserMutation,
+    useUpdateUserMutation,
+} from '../../../../services/user/user';
+import { IUser } from '../../../../services/auth/model';
+import { CreateUserByAdmin } from '../../../../services/user/model';
 // import { useAppDispatch, useAppSelector } from '../../../../stores/store';
 // import { setCurrentCar } from '../../../../stores/car/slice';
 // import { Manufacturer } from '../../../../models/entities/Manufacturer';
@@ -23,6 +29,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 type Props = {
     isOpen: boolean;
+    user?: CreateUserByAdmin;
     onClose: () => void;
     // onSubmit: (id: number, car: CarDto) => void;
     onSubmit: (id: number, car: object) => void;
@@ -50,8 +57,17 @@ const UserModal = (props: Props) => {
     // const manufacturers = useAppSelector(
     //     (state) => state.manufacturer.manufacturers
     // );
-    const [carId, setCarId] = React.useState(0);
+    // const [carId, setCarId] = React.useState(0);
+    console.log('🚀 ~ file: UserModal.tsx ~ line 37 ~ user', props.user?.id);
+    const [name, setName] = React.useState(props.user?.name ?? '');
+    const [email, setEmail] = React.useState(props.user?.email ?? '');
     const [error, setError] = React.useState(false);
+
+    const [createUser, { isLoading: isUserCreateLoading }] =
+        useCreateUserMutation();
+
+    const [updateUser, { isLoading: isUserUpdateLoading }] =
+        useUpdateUserMutation();
     // const dispatch = useAppDispatch();
 
     // Object.entries(BodyType)
@@ -82,16 +98,31 @@ const UserModal = (props: Props) => {
     //     }
     // }, [reduxCurrentCar]);
 
-    const handleSubmitAction = () => {
-        checkInputErrors();
-        clearInputs();
-        // props.onSubmit(carId, currentCarDto);
-        props.onClose();
+    const handleSubmitAction = async () => {
+        // checkInputErrors();
+
+        try {
+            if (props.user) {
+                await updateUser({
+                    name: name,
+                    email: email,
+                    id: props.user.id,
+                });
+            } else {
+                await createUser({ name: name, email: email });
+            }
+            clearInputs();
+            // props.onSubmit(carId, currentCarDto);
+            props.onClose();
+        } catch (error) {}
     };
 
     const clearInputs = () => {
         // setCurrentCarDto(initialStateCarDto);
         // dispatch(setCurrentCar({} as Car));
+
+        setName(props.user?.name ?? '');
+        setEmail(props.user?.email ?? '');
         setError(false);
     };
 
@@ -147,7 +178,8 @@ const UserModal = (props: Props) => {
                     sx={{ marginBottom: 2, marginTop: 2 }}
                     label='Email'
                     variant='outlined'
-                    // value={currentCarDto.model}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     //     setCurrentCarDto({
                     //         ...currentCarDto,
@@ -159,7 +191,8 @@ const UserModal = (props: Props) => {
                     sx={{ marginBottom: 2, marginTop: 2 }}
                     label='Name'
                     variant='outlined'
-                    // value={currentCarDto.model}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     //     setCurrentCarDto({
                     //         ...currentCarDto,

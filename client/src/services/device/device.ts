@@ -2,6 +2,7 @@ import { api } from '../../api/api';
 import { setUser } from '../../store/user/userSlice';
 import {
     Consumption,
+    CreateDevice,
     Device,
     IAuthTokenResponse,
     ILoginUser,
@@ -19,6 +20,35 @@ export const deviceSlice = api.injectEndpoints({
                 url: `devices/consumption/${id}?startDate=${startDate}&endDate=${endDate}`,
                 method: 'GET',
             }),
+        }),
+        getAllDevices: builder.query<Device[], undefined>({
+            query: () => ({
+                url: `/devices`,
+            }),
+            providesTags: ['Devices'],
+        }),
+        createDevice: builder.mutation<Device, CreateDevice>({
+            query: (body) => ({
+                url: `/devices`,
+                method: 'POST',
+                body,
+            }),
+            invalidatesTags: ['Devices'],
+        }),
+        updateDevice: builder.mutation<Device, CreateDevice>({
+            query: (args) => ({
+                url: `/devices/${args.id}`,
+                method: 'PUT',
+                body: Object.assign({}, { ...args }, { id: undefined }),
+            }),
+            invalidatesTags: ['Devices'],
+        }),
+        deleteDevice: builder.mutation<Device, string>({
+            query: (id) => ({
+                url: `/devices/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Devices'],
         }),
         // signup: builder.mutation<IAuthTokenResponse, IRegisterUser>({
         //     query: (body) => ({
@@ -56,7 +86,13 @@ export const deviceSlice = api.injectEndpoints({
     }),
 });
 
-export const { useDeviceConsumptionsQuery, useLazyDeviceConsumptionsQuery } =
-    deviceSlice;
+export const {
+    useDeviceConsumptionsQuery,
+    useLazyDeviceConsumptionsQuery,
+    useGetAllDevicesQuery,
+    useUpdateDeviceMutation,
+    useCreateDeviceMutation,
+    useDeleteDeviceMutation,
+} = deviceSlice;
 
 // export const selectUsersResult = authSlice.endpoints.getUsers.select();
