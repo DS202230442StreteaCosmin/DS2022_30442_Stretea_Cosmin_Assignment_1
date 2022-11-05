@@ -62,5 +62,3 @@ export const authSlice = api.injectEndpoints({
 
 export const { useGetProfileQuery, useLoginMutation, useSignupMutation } =
     authSlice;
-
-// export const selectUsersResult = authSlice.endpoints.getUsers.select();

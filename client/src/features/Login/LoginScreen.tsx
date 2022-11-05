@@ -3,7 +3,6 @@ import { LoadingButton } from '@mui/lab';
 import {
     Avatar,
     Box,
-    Button,
     CssBaseline,
     Grid,
     Link,
@@ -13,7 +12,6 @@ import {
 import Paper from '@mui/material/Paper';
 import React from 'react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
-import { hasOnlyExpressionInitializer } from 'typescript';
 import { AppRoutes } from '../../router/AppRoutes';
 import { useGetProfileQuery, useLoginMutation } from '../../services/auth/auth';
 import { ILoginUser, UserRoles } from '../../services/auth/model';
@@ -137,9 +135,7 @@ const LoginScreen = () => {
                                 >
                                     Sign In
                                 </LoadingButton>
-                                {/* {user.isInputError && (
-                            <Alert severity='error'>Invalid credentials!</Alert>
-                        )} */}
+
                                 <Grid container>
                                     <Grid item>
                                         <RouteLink to='/register'>

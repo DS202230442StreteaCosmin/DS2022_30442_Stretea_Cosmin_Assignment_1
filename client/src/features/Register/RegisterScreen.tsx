@@ -15,14 +15,9 @@ import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../router/AppRoutes';
 import {
     useGetProfileQuery,
-    useLoginMutation,
     useSignupMutation,
 } from '../../services/auth/auth';
-import {
-    ILoginUser,
-    IRegisterUser,
-    UserRoles,
-} from '../../services/auth/model';
+import { IRegisterUser, UserRoles } from '../../services/auth/model';
 import { useAppSelector } from '../../store/store';
 
 const RegisterScreen = () => {
@@ -60,15 +55,6 @@ const RegisterScreen = () => {
         }
     }, [currentUser, profile]);
 
-    // React.useEffect(() => {
-    //     if (user.isLoggedIn) {
-    //         if (user.user.isAdmin) {
-    //             navigate('/admin-dashboard');
-    //         } else {
-    //             navigate('/dashboard/cars');
-    //         }
-    //     }
-    // }, [user.isLoggedIn]);
     return (
         <Grid container component='main' sx={{ height: '100vh' }}>
             <CssBaseline />
@@ -161,14 +147,11 @@ const RegisterScreen = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleSignUp();
-                                // dispatch(signupAction(email, password));
                             }}
                         >
                             Register
                         </Button>
-                        {/* {user.isInputError && (
-                            <Alert severity='error'>Invalid credentials!</Alert>
-                        )} */}
+
                         <Grid container>
                             <Grid item>
                                 <RouteLink to='/login'>

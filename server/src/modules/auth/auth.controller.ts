@@ -44,7 +44,6 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  //   @UseGuards(JwtAuthGuard)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('profile')

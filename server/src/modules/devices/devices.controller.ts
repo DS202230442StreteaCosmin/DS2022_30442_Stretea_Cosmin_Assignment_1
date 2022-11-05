@@ -1,28 +1,27 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Param,
   Post,
+  Put,
+  Query,
   UseFilters,
   UseGuards,
-  Query,
-  Put,
-  BadRequestException,
 } from '@nestjs/common';
-import { DevicesService } from './devices.service';
-import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { EntityNotFoundError } from 'typeorm';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { EntityNotFoundError } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { HasRoles } from '../auth/has-roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
+import { DevicesService } from './devices.service';
 import { CreateConsumptionDto } from './dto/create-consumption.dto';
-import { DeviceTimeInterval } from './dto/device-interval.dto';
+import { CreateDeviceDto } from './dto/create-device.dto';
+import { UpdateDeviceDto } from './dto/update-device.dto';
 
 @ApiTags('devices')
 @Controller('devices')

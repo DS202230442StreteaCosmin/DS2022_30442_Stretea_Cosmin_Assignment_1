@@ -1,12 +1,8 @@
 import { IconButton, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react';
-// import { useAppDispatch, useAppSelector } from "../../stores/store";
-// import { setSearchInput } from "../../stores/user/slice";
 
 const SearchBar = () => {
-    // const disptach = useAppDispatch();
-    // const searchValue = useAppSelector((state) => state.user.searchInput);
     return (
         <>
             <TextField

@@ -5,17 +5,10 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
 import { AppRoutes } from '../../router/AppRoutes';
-import { useGetAllUsersQuery } from '../../services/user/user';
 import { useAppDispatch } from '../../store/store';
 import { logout } from '../../store/user/userSlice';
 import Devices from './Devices/Devices';
 import Mappings from './Mappings/Mappings';
-// import { getAppointmentsAction } from "../../stores/appointments/actions";
-// import { getCarsAction } from "../../stores/car/actions";
-// import { getManufacturersAction } from "../../stores/manufacturer/actions";
-// import { useAppDispatch, useAppSelector } from "../../stores/store";
-// import { initUserData } from "../../stores/user/actions";
-// import { logout, setSearchInput } from "../../stores/user/slice";
 import Users from './Users/Users';
 
 const AdminDashboard = () => {
@@ -25,29 +18,18 @@ const AdminDashboard = () => {
     const [currentRoute, setCurrentRoute] = React.useState(
         '/admin-dashboard/users'
     );
-
-    // const userId = useAppSelector((state) => state.user.user.id);
-
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setCurrentRoute(newValue);
-        // dispatch(setSearchInput(''));
         navigate(newValue);
     };
 
     React.useEffect(() => {
         navigate('/admin-dashboard/users');
-        // dispatch(getCarsAction());
-        // dispatch(getAppointmentsAction());
-        // dispatch(getManufacturersAction());
     }, []);
     React.useEffect(() => {
         if (Object.values(AppRoutes).indexOf(location.pathname) == -1) {
             setCurrentRoute('/admin-dashboard/users');
         }
-        // navigate('/admin-dashboard/users');
-        // dispatch(getCarsAction());
-        // dispatch(getAppointmentsAction());
-        // dispatch(getManufacturersAction());
     }, [location.pathname]);
 
     return (

@@ -10,7 +10,6 @@ import {
     Select,
     Typography,
 } from '@mui/material';
-import { api } from '../../../../api/api';
 import { useGetAllDevicesQuery } from '../../../../services/device/device';
 import { Device } from '../../../../services/device/model';
 import { useAddDeviceToUserMutation } from '../../../../services/user/user';
@@ -20,8 +19,6 @@ type Props = {
     userId: string;
     userDevices?: Device[];
     onClose: () => void;
-    // onSubmit: (id: number, car: CarDto) => void;
-    onSubmit: (id: number, car: object) => void;
 };
 
 const getDifference = (array1: Device[], array2: Device[]) => {
@@ -105,23 +102,12 @@ const MappingModal = (props: Props) => {
                         <Select
                             labelId='demo-simple-select-label'
                             id='demo-simple-select'
-                            // defaultValue={currentCarDto.manufacturerId}
                             value={selectedDevice}
                             onChange={(e) => setSelectedDevice(e.target.value)}
-                            label='Device'
-                            // onChange={(e) => {
-                            //     setCurrentCarDto({
-                            //         ...currentCarDto,
-                            //         manufacturerId: +e.target.value,
-                            //     });
-                            // }}
                         >
                             {availableDevices.map((e) => (
                                 <MenuItem value={e.id}>{e.name}</MenuItem>
                             ))}
-                            {/* <MenuItem value={'1'}>{1}</MenuItem>
-                        <MenuItem value={'2'}>{2}</MenuItem>
-                        <MenuItem value={'3'}>{3}</MenuItem> */}
                         </Select>
                     )}
                     <Button
