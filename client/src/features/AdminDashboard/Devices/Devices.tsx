@@ -18,6 +18,7 @@ import {
 } from '../../../services/device/device';
 import { Device } from '../../../services/device/model';
 import DeviceModal from './DeviceModal/DeviceModal';
+import { useAppSelector } from '../../../store/store';
 
 const Devices = () => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -30,6 +31,33 @@ const Devices = () => {
         useGetAllDevicesQuery(undefined);
 
     const [deleteDevice] = useDeleteDeviceMutation();
+
+    const [filteredData, setFilteredData] = React.useState<Device[]>([]);
+
+    const searchCriteria = useAppSelector(
+        (state) => state.searchState.searchCriteria
+    );
+
+    React.useEffect(() => {
+        if (!searchCriteria || !devices) {
+            setFilteredData([]);
+            return;
+        }
+
+        setFilteredData(getFilteredData());
+    }, [searchCriteria, devices]);
+
+    const getFilteredData = () => {
+        return devices!.filter(
+            (e) =>
+                e.name.indexOf(searchCriteria) >= 0 ||
+                e.description.indexOf(searchCriteria) >= 0 ||
+                e.id.indexOf(searchCriteria) >= 0 ||
+                e.maxHourlyConsumption.toString().indexOf(searchCriteria) >=
+                    0 ||
+                e.address.indexOf(searchCriteria) >= 0
+        );
+    };
 
     return (
         <>
@@ -58,53 +86,58 @@ const Devices = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {devices.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    sx={{
-                                        '&:last-child td, &:last-child th': {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
-                                    <TableCell component='th' scope='row'>
-                                        {row.id}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.description}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.address}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.maxHourlyConsumption}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        <>
-                                            <IconButton
-                                                aria-label='delete'
-                                                onClick={() => {
-                                                    setSelectedDevice(row);
-                                                    setIsModalOpen(true);
-                                                }}
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label='delete'
-                                                onClick={async () => {
-                                                    await deleteDevice(row.id);
-                                                }}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {(searchCriteria ? filteredData : devices).map(
+                                (row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        sx={{
+                                            '&:last-child td, &:last-child th':
+                                                {
+                                                    border: 0,
+                                                },
+                                        }}
+                                    >
+                                        <TableCell component='th' scope='row'>
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.name}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.description}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.address}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.maxHourlyConsumption}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <>
+                                                <IconButton
+                                                    aria-label='delete'
+                                                    onClick={() => {
+                                                        setSelectedDevice(row);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                    aria-label='delete'
+                                                    onClick={async () => {
+                                                        await deleteDevice(
+                                                            row.id
+                                                        );
+                                                    }}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>

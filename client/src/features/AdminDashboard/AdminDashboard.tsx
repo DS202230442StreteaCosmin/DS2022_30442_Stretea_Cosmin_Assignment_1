@@ -5,8 +5,10 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/SerchBar/SearchBar';
 import { AppRoutes } from '../../router/AppRoutes';
-import { useAppDispatch } from '../../store/store';
+import { clearSearch } from '../../store/search/searchSlice';
+import { useAppDispatch, useAppSelector } from '../../store/store';
 import { logout } from '../../store/user/userSlice';
+
 import Devices from './Devices/Devices';
 import Mappings from './Mappings/Mappings';
 import Users from './Users/Users';
@@ -15,6 +17,7 @@ const AdminDashboard = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navigate = useNavigate();
+
     const [currentRoute, setCurrentRoute] = React.useState(
         '/admin-dashboard/users'
     );
@@ -31,6 +34,10 @@ const AdminDashboard = () => {
             setCurrentRoute('/admin-dashboard/users');
         }
     }, [location.pathname]);
+
+    React.useEffect(() => {
+        dispatch(clearSearch());
+    }, [currentRoute]);
 
     return (
         <>

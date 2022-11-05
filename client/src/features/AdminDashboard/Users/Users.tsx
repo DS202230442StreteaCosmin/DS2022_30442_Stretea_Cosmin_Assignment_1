@@ -12,12 +12,13 @@ import TableRow from '@mui/material/TableRow';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { CreateUserByAdmin } from '../../../services/user/model';
+import { CreateUserByAdmin, IUser } from '../../../services/user/model';
 import {
     useDeleteUserMutation,
     useGetAllUsersQuery,
 } from '../../../services/user/user';
 import UserModal from './UserModal/UserModal';
+import { useAppSelector } from '../../../store/store';
 
 const Users = () => {
     const [deleteUser, { isLoading: isDeleteLoading }] =
@@ -30,6 +31,30 @@ const Users = () => {
 
     const { data: users, isFetching: areUsersLoading } =
         useGetAllUsersQuery(undefined);
+
+    const [filteredData, setFilteredData] = React.useState<IUser[]>([]);
+
+    const searchCriteria = useAppSelector(
+        (state) => state.searchState.searchCriteria
+    );
+
+    React.useEffect(() => {
+        if (!searchCriteria || !users) {
+            setFilteredData([]);
+            return;
+        }
+
+        setFilteredData(getFilteredData());
+    }, [searchCriteria, users]);
+
+    const getFilteredData = () => {
+        return users!.filter(
+            (e) =>
+                e.name.indexOf(searchCriteria) >= 0 ||
+                e.email.indexOf(searchCriteria) >= 0 ||
+                e.id.indexOf(searchCriteria) >= 0
+        );
+    };
 
     return (
         <>
@@ -54,47 +79,50 @@ const Users = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {users.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    sx={{
-                                        '&:last-child td, &:last-child th': {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
-                                    <TableCell component='th' scope='row'>
-                                        {row.id}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.email}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        <>
-                                            <IconButton
-                                                aria-label='delete'
-                                                onClick={() => {
-                                                    setSelectedUser(row);
-                                                    setIsModalOpen(true);
-                                                }}
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                aria-label='delete'
-                                                onClick={async () =>
-                                                    await deleteUser(row.id)
-                                                }
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        </>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {(searchCriteria ? filteredData : users).map(
+                                (row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        sx={{
+                                            '&:last-child td, &:last-child th':
+                                                {
+                                                    border: 0,
+                                                },
+                                        }}
+                                    >
+                                        <TableCell component='th' scope='row'>
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.email}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.name}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <>
+                                                <IconButton
+                                                    aria-label='delete'
+                                                    onClick={() => {
+                                                        setSelectedUser(row);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                    aria-label='delete'
+                                                    onClick={async () =>
+                                                        await deleteUser(row.id)
+                                                    }
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>

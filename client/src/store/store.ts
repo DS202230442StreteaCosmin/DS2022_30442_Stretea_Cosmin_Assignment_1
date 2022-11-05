@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { api } from '../api/api';
+import { searchReducer } from './search/searchSlice';
 import { userReducer } from './user/userSlice';
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         // Add the generated reducer as a specific top-level slice
         [api.reducerPath]: api.reducer,
         userState: userReducer,
+        searchState: searchReducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.

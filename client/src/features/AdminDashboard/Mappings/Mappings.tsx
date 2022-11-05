@@ -20,6 +20,8 @@ import {
     useUserDevicesQuery,
 } from '../../../services/user/user';
 import MappingModal from './MappingModal/MappingModal';
+import { useAppSelector } from '../../../store/store';
+import { Device } from '../../../services/device/model';
 
 const Mappings = () => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -33,6 +35,33 @@ const Mappings = () => {
         useUserDevicesQuery(currentUser?.id ?? '');
 
     const [removeDeviceFromUser] = useRemoveDeviceFromUserMutation();
+
+    const [filteredData, setFilteredData] = React.useState<Device[]>([]);
+
+    const searchCriteria = useAppSelector(
+        (state) => state.searchState.searchCriteria
+    );
+
+    React.useEffect(() => {
+        if (!searchCriteria || !userDevices) {
+            setFilteredData([]);
+            return;
+        }
+
+        setFilteredData(getFilteredData());
+    }, [searchCriteria, userDevices]);
+
+    const getFilteredData = () => {
+        return userDevices!.filter(
+            (e) =>
+                e.name.indexOf(searchCriteria) >= 0 ||
+                e.description.indexOf(searchCriteria) >= 0 ||
+                e.id.indexOf(searchCriteria) >= 0 ||
+                e.maxHourlyConsumption.toString().indexOf(searchCriteria) >=
+                    0 ||
+                e.address.indexOf(searchCriteria) >= 0
+        );
+    };
 
     return (
         <>
@@ -82,46 +111,49 @@ const Mappings = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {userDevices.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    sx={{
-                                        '&:last-child td, &:last-child th': {
-                                            border: 0,
-                                        },
-                                    }}
-                                >
-                                    <TableCell component='th' scope='row'>
-                                        {row.id}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.description}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.address}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {row.maxHourlyConsumption}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        <IconButton
-                                            disabled={!currentUser}
-                                            aria-label='delete'
-                                            onClick={async () =>
-                                                await removeDeviceFromUser({
-                                                    userId: currentUser.id,
-                                                    deviceId: row.id,
-                                                })
-                                            }
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {(searchCriteria ? filteredData : userDevices).map(
+                                (row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        sx={{
+                                            '&:last-child td, &:last-child th':
+                                                {
+                                                    border: 0,
+                                                },
+                                        }}
+                                    >
+                                        <TableCell component='th' scope='row'>
+                                            {row.id}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.name}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.description}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.address}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            {row.maxHourlyConsumption}
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <IconButton
+                                                disabled={!currentUser}
+                                                aria-label='delete'
+                                                onClick={async () =>
+                                                    await removeDeviceFromUser({
+                                                        userId: currentUser.id,
+                                                        deviceId: row.id,
+                                                    })
+                                                }
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
