@@ -19,11 +19,15 @@ import {
 } from '../../services/auth/auth';
 import { IRegisterUser, UserRoles } from '../../services/auth/model';
 import { useAppSelector } from '../../store/store';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '../../components/Alert/Alert';
 
 const RegisterScreen = () => {
     const [email, setEmail] = React.useState('');
     const [name, setName] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [errorAlert, setErrorAlert] = React.useState(false);
+
     const navigate = useNavigate();
 
     const currentUser = useAppSelector((state) => state.userState.user);
@@ -57,6 +61,23 @@ const RegisterScreen = () => {
 
     return (
         <Grid container component='main' sx={{ height: '100vh' }}>
+            <Snackbar
+                anchorOrigin={{
+                    horizontal: 'center',
+                    vertical: 'top',
+                }}
+                open={errorAlert}
+                autoHideDuration={6000}
+                onClose={() => setErrorAlert(false)}
+            >
+                <Alert
+                    onClose={() => setErrorAlert(false)}
+                    severity='error'
+                    sx={{ width: '100%' }}
+                >
+                    Invalid inputs!
+                </Alert>
+            </Snackbar>
             <CssBaseline />
             <Grid
                 item

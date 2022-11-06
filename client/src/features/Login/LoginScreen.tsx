@@ -16,10 +16,13 @@ import { AppRoutes } from '../../router/AppRoutes';
 import { useGetProfileQuery, useLoginMutation } from '../../services/auth/auth';
 import { ILoginUser, UserRoles } from '../../services/auth/model';
 import { useAppSelector } from '../../store/store';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '../../components/Alert/Alert';
 
 const LoginScreen = () => {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [errorAlert, setErrorAlert] = React.useState(false);
     const navigate = useNavigate();
 
     const currentUser = useAppSelector((state) => state.userState.user);
@@ -35,7 +38,9 @@ const LoginScreen = () => {
             };
 
             await login(bodyData).unwrap();
-        } catch (error) {}
+        } catch (error) {
+            setErrorAlert(true);
+        }
     };
 
     React.useEffect(() => {
@@ -121,6 +126,23 @@ const LoginScreen = () => {
                                         setPassword(e.target.value)
                                     }
                                 />
+                                <Snackbar
+                                    anchorOrigin={{
+                                        horizontal: 'center',
+                                        vertical: 'top',
+                                    }}
+                                    open={errorAlert}
+                                    autoHideDuration={6000}
+                                    onClose={() => setErrorAlert(false)}
+                                >
+                                    <Alert
+                                        onClose={() => setErrorAlert(false)}
+                                        severity='error'
+                                        sx={{ width: '100%' }}
+                                    >
+                                        Invalid inputs!
+                                    </Alert>
+                                </Snackbar>
 
                                 <LoadingButton
                                     loading={isLoading}
