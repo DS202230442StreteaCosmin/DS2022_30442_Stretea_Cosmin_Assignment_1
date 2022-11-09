@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 // Define a service using a base URL and expected endpoints
 
 const customBaseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:8000',
+    baseUrl: process.env.REACT_APP_API_URL,
     prepareHeaders: (headers: Headers) => {
         const token = window.localStorage.getItem('access_token') || '';
 
